@@ -1,0 +1,1549 @@
+\documentclass[10pt]{article}
+\usepackage{NotesTeX} %/Path/to/package should be replaced with package location
+\usepackage{lipsum}
+\usepackage{extpfeil}
+\usepackage{mathtools}
+\usepackage{csquotes}
+
+\AtBeginEnvironment{quote}{\itshape}
+
+\let\emph\relax % there's no \RedeclareTextFontCommand
+\DeclareTextFontCommand{\emph}{\bfseries\em}
+
+\newcommand{\C}{\mathbb{C}} 
+\newcommand{\F}{\mathbb{F}} 
+\newcommand{\R}{\mathbb{R}} 
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\renewcommand{\L}{\mathcal{L}}
+
+\newcommand{\emphr}[1]{\textcolor[rgb]{1,0.3,0.2}{\emph{\textbf{#1}}}}
+
+\newcommand{\myseries}[2]{$#1_1,#1_2,\dots,#1_#2$}
+\newcommand{\mathematicafont}[1]{\usefont{OT1}{pcr}{m}{n}#1\usefont{T1}{lmss}{m}{n}}
+\newcommand{\scp}[2]{\left\langle\,#1\,,\,#2\,\right\rangle} \newcommand{\scpp}{\langle\,\cdot\,,\,\cdot\,\rangle}
+\newcommand{\rot}{\text{\Large{\calligra{rot}}\,}}
+
+\title{{\Huge Vv285 Linear Algebra and Functions of Multiple Variables Review\footnote{\href{http://umji.sjtu.edu.cn/~horst/}{\textit{This work is based on lecture slides VV285 taught by Prof. Horst Hohberger at UM-SJTU Joint Institute in 2018 summer.}}}}\\{\Large{}}}
+\author{Shaoxiong Yao}
+
+\affiliation{University of Michigan}
+\emailAdd{yaosx@umich.edu}
+\begin{document}
+  \maketitle
+  \flushbottom
+  \newpage
+  \pagestyle{fancynotes}
+
+  \part{Convergence and Continuity}
+  \begin{definition}
+    Let $(V, \|\cdot\|)$ be a normed vector space. Then
+    \begin{equation}
+      B_{\varepsilon}(a):=\{x \in V:\|x-a\| < \varepsilon\}, \quad a \in V, \varepsilon > 0,
+    \end{equation}
+    is called an \emph{open ball} of radius $\varepsilon$ about $a$.
+
+  \end{definition}
+  Notice that an open ball may not have an obvious shape like $V = \mathcal{P}_{n}$.
+
+  \begin{definition}
+    Let $(V, \|\cdot\|)$ be a normed vector space. A set $U \subset V$ is called \emph{open} if for every $a \in U$ there exists an $\varepsilon > 0$ such that $B_{\varepsilon}(a) \subset U$.
+  \end{definition}
+
+  \begin{remark}
+    We note that any point is contained in some open ball inside the open set.
+  \end{remark}
+
+  \begin{example}
+    \begin{enumerate}[(i)]
+      \item Any open ball $B_{\varepsilon}(a), \varepsilon > 0, a \in V$, is an open set.
+      
+      \item The empty set $\emptyset \subset V$ is open. (This is true because \emph{vacuously true statement}.)
+      
+      \item The entire space $V$ is an open set in $V$.
+    \end{enumerate}
+  \end{example}
+
+  We will see that open sets are fundamental to understand properties of continuous functions, convergence in vector space and much more.
+
+  Therefore, it becomes important to answer a basic question:
+  \begin{quote}
+    If a set is open in a vector space $(V,\|\cdot\|)$, is it also open if $\|\cdot\|$ is replaced by some other norm?
+  \end{quote}
+
+  \begin{definition}
+    Let $V$ be a vector space on which we may define two norms $\|\cdot\|_{1}$ and $\|\cdot\|_{2}$. Then the two noms are called \emph{equivalent} is there exists two constants $C_{1},C_{2} > 0$ such that 
+    \begin{equation}
+      C_{1}\|x\|_{1} \leq \|x\|_{2} \leq C_{2}\|x\|_{1}, \qquad \text{for all }x \in V.
+    \end{equation}
+  \end{definition}
+
+  \begin{example}
+    In $\R^{n}$ we have (amongst others) the following two possible choices of norms 
+    \begin{equation}
+      \|x\|_{2}:=\left(\sum_{i = 1}^{n}|x_{i}||^{2}\right)^{1/2}, \qquad \|x\|_\infty:= \max_{1 \leq i \leq n}|x_{i}|.
+    \end{equation}
+    We note that 
+    \[
+      \begin{aligned}
+        &\|x\|_{2} \leq \left(n\|x\|_{\infty}^{2}\right)^{1/2} = \sqrt{n}\|x_{\infty}\|,\\
+        &\|x\|_{\infty} \leq \left(\|x\|_{\infty}^{2}+\sum_{i \neq j, \|x_{j}\| = \|x\|_{\infty}}\|x_{i}\|\right)^{1/2} = \|x\|_{2}.\\
+      \end{aligned}
+    \]
+    then we have
+    \[\frac{1}{\sqrt{n}}\|x\|_{2} \leq \|x\|_{\infty} \leq \|x\|_{2}.\]
+  \end{example}
+
+  \begin{remark}
+    We want to show that if two norms are equivalent, then a set is an open set with respect to both norms.
+
+    Assume $U$ is an open set with respect to $\|\cdot\|_{1}$, then we have for $a \in U$, there exist $\varepsilon > 0$ such that $B_{\varepsilon} \subset U$. We then have
+    \[B_{\varepsilon} = \{x:\|x-a\|_{1}<\varepsilon\}.\]
+    Then to claim that $U$ is also an open set with respect to $\|\cdot\|_{2}$, we want to find $B_{\varepsilon'} \subseteq B_{\varepsilon}$ for all $x$ above. We then find $\varepsilon' = C_{1}\varepsilon$ such that 
+    \[
+      \begin{aligned}
+        \|x-a\|_{2} \leq \varepsilon' &\Rightarrow C_{1}\|x-a\|_{1} \leq \|x-a\|_{2} \leq C_{1}\varepsilon'\\
+        &\Rightarrow \|x-a\|_{1} \leq \varepsilon.\\
+      \end{aligned}
+    \]
+    We then have $B_{\varepsilon'} \subseteq B_{\varepsilon}$ and $U$ is also an open set with respect to $\|\cdot\|_{2}$.
+  \end{remark} 
+
+  \begin{definition}
+    Let $(V,\|\cdot\|)$ be a normed vector space and $(v_{n})$ a sequence in $V$. Then $(v_{n})$ converges to a (unique) limit $v \in V$,
+    \[v_{n} \xrightarrow[]{n \rightarrow \infty} v 
+    \qquad 
+    \text{ if and only if } \qquad \|v_{n}-v\|\xrightarrow[]{n \rightarrow \infty} 0.\]
+  \end{definition}
+
+  For later use, we note:
+  \begin{remark}
+    If a sequence $(v_{n})$ in $(V,\|\cdot\|)$ converges to $v \in V$, then $\|v_{n}\| \rightarrow \|v\|$. This follows from 
+    \[\big|\|v_{n}\|-\|v\|\big| \leq \|v-v_{n}\| \to 0.\]
+  \end{remark}
+
+  \begin{remark}
+    We notice that if two norms on a vector space are equivalent, then a sequence that converges to a limit with respect to the first norm is also convergent to the same limit with respect to the second norm.
+
+    For the first norm we have,
+    \[\forall \varepsilon > 0, \exists N  \in \N, \|v_{n}-v\|_{1} \leq \varepsilon \text{ for all }n>N,\]
+    then for the second norm, $\forall \varepsilon > 0$, we can find $\frac{\varepsilon}{C_{2}} > 0$ such that
+    \[\exists N>0, \|v_{n}-v\|_{1} < \frac{\varepsilon_{1}}{C_{2}} \text{ for all }n>N.\]
+    We then have for this $N>0$,
+    \[\|v_{n}-v\|_{2} \leq C_{2}\|v_{n}-v\|_{1} < \varepsilon \text{ for all }n>N.\]
+  \end{remark}
+
+  The following theorem is of fundamental importance:
+  \begin{theorem}
+    In a finite-dimensional vector space, all norms are equivalent.
+  \end{theorem}
+
+  A major consequence of \textbf{Theorem 0.1} is that if we have several norms at our disposal in a finite-dimensional spae, then we can freely choose a convenient one in order to show openness of sets, convergence of sequences, etc.
+
+  The proof of \textbf{Theorem 0.1} requires some preliminary work.
+
+  We recall two basic facts from the theory of sequences of real numbers:
+  \begin{itemize}
+    \item Every bounded and monotonic sequence of real numbers converges.
+    \item Every sequence of real numbers has a monotonic subsequence.
+  \end{itemize}
+  Therefor, these yields the following fundamental result (cf. 186 \textbf{Theorem 2.2.35}):
+  
+  \begin{theorem}
+    \textit{(Theorem of Bolzano-Weierstra\ss)} 
+    Every bounded sequence of real numbers has a convergent subsequence.
+  \end{theorem}
+  
+  We remark that the \textbf{Theorem of Bolzano-Weierstra\ss} easily implies that every Cauchy sequence of real numbers converges, because every Cauchy sequence that has a convergent subsequence must itself converge. Thus the basic ingredient in proving that the real numbers (with the usual metric) are complete is the fact that a bounded, monotonic sequences converges.
+
+  \begin{theorem}
+    \textit{(Theorem of Bolzano-Weierstra{\ss} in $\R^{n}$)}
+    Let $\left(x^{(m)}\right)_{m \in \N}$ be a sequence of vectors in $\R$, i.e., 
+    $x^{(m)} = \left(x_{1}^{(m)},...,x_{n}^{(m)}\right)$.
+    Suppose that there exists a constant $C>0$ such that $|x_{k}^{(m)}|<C$ for all $m \in \N$ and each $k = 1,...,n$.
+    Then there exists a subsequence $\left(x^{(m_{j})}\right)_{j \in \N}$ that converges to a vector $y \in \R^{n}$ in the sense that 
+    \[
+      x_{k}^{(m_{j})}\xrightarrow[]{j \rightarrow \infty}y_{k}
+      \qquad
+      \text{ for }k=1,...,n.  
+    \]
+  \end{theorem}
+
+  \begin{proof}
+    Consider the real coordinate sequence $\left(x_{1}^{(m_{j})}\right)_{m \in \N}$. 
+    By assumption, this sequence is bounded, so by the Theorem of Bolzano-Weierstra{\ss} (theorem on sequence of numbers.)
+    there exists a convergent subsequence $\left(x_{1}^{m_{j_{1}}}\right)$ with some limit, say $y_{1} \in \R$.
+
+    The second coordinate sequence $\left(x_{2}^{m}\right)$ is also bounded an have a convergent subsequence, 
+    but this subsequence does not need to have the same indices as that for $\left(x_{1}^{(m)}\right)$.
+
+    We therefore employ a trick: we consider the indices sequence $m_{j_{i}}$ which gives a convergent sequence of $x_{1}$, then 
+    this will correspond to a subsequence of $x_{2}$ which is $\left(x_{2}^{(m_{j_{1}})}\right)$.
+    For this sequence of numbers, we can find a subsequence $\left(x_{2}^{(m_{j_{2}})}\right)$ which converges to $y_{2} \in \R$.
+    Since $\left(x_{1}^{(m_{j_{1}})}\right)$ converges and $m_{j_{2}}$ is a subsequence of $m_{j_{1}}$, 
+    we have $\left(x_{1}^{(m_{j_{2}})}\right)$ also converges to $y_{1} \in \R$.
+
+    Similarly, we can find a sub-sub-subsequence with indices $m_{j_{3}}$ 
+    and the third coordinate $\left(x_{3}^{(m_{j_{3}})}\right)$ will converge to some $y_{3} \in \R$.
+    We have the corresponding sub-sub-subsequence $\left(x_{1}^{m_{j_{3}}}\right)$ and $\left(x_{2}^{m_{j_{3}}}\right)$
+    will still converge to $y_{1}$ and $y_{2}$.
+
+    Repeating this procedure $n$ times, the $n$-fold subsequence $\left(x_{k}^{m_{j_{n}}}\right)$ converges to some $y_{k} \in \R$,
+    $k = 1,...,n$. Hence, the subsequence $\left(x^{(m_{j_{n}})}\right)$ converges to some $y \in \R^{n}$.
+  \end{proof}
+
+  \begin{lemma}
+    Let $(V,\|\cdot\|)$ be a finite- or infinite-dimensional normed vector space and $\{v_{1},...,v_{n}\}$ an independent set in $V$.
+    Then there exists a $C > 0$ such that for any $\lambda_{1},...,\lambda_{n} \in \F$
+    \begin{equation}
+      \big\|\lambda_{1}v_{1}+\cdots+\lambda_{n}v_{n}\big\| \geq C(|\lambda_{1}|+\cdots+|\lambda_{n}|).
+    \end{equation}
+  \end{lemma}
+
+  \begin{proof}
+    Let $s := |\lambda_{1}|+\cdots+|\lambda_{n}|$. If $s = 0$, then all $\lambda_{k} = 0$ and the inequality $(0.4)$ holds trivially
+    for any $C$, so we can assume $s > 0$. Dividing by $s$, $(0.4)$ becomes 
+    \begin{equation}
+      \big\|\mu_{1}v_{1}+\cdots+\mu_{n}v_{n}\big\| \geq C, \quad \sum_{k = 1}^{n}|\mu_{k}| = 1,
+    \end{equation}
+    with $\mu_{k} = \lambda_{k}/s$.
+
+    Hence, we need to show
+    \[
+      \mathop{\exists}_{C>0}\mathop{\forall}_{\begin{subarray}~~~~\mu_{1},...,\mu_{n} \in \F \\ |\mu_{1}|+\cdots+|\mu_{n}| = 1\end{subarray}} 
+      \big\|\mu_{1}v_{1}+\cdots+\mu_{n}v_{n}\big\| \geq C.
+    \]
+
+    Suppose that this is false, i.e.,
+    \[
+      \mathop{\forall}_{C>0}\mathop{\exists}_{\begin{subarray}~~~~\mu_{1},...,\mu_{n} \in \F \\ |\mu_{1}|+\cdots+|\mu_{n}| = 1\end{subarray}}
+      \big\|\mu_{1}v_{1}+\cdots+\mu_{n}v_{n}\big\| < C.  
+    \]
+
+    In particular, choosing $C = 1/m$, $m = 1,2,3,...,$ we can find a sequence of vectors
+    \[
+      u^{(m)} := \mu_{1}^{(m)}v_{1}+\cdots+\mu_{n}^{(m)}v_{n}
+    \]
+    such that $\|u^{(m)}\| \rightarrow 0$ as $m \rightarrow \infty$ and $|\mu_{1}^{(m)}|+\cdots+|\mu_{n}^{(m)}| = 1$ for all m.
+
+    Hence, for each $k = 1,...,n$, $|\mu_{k}^{(m)}| \leq 1$ and so each coefficient sequence $\left(\mu_{k}^{(m)}\right)$ is bounded.
+    Write
+    \[\mu^{(m)}:=\left(\mu_{1}^{(m)},...,\mu_{n}^{(m)}\right)\]
+    By the Theorem of Bolzano Weierstra{\ss} in $\R^{n}$, there exists a subsequence of vectors $\left(\mu^{(m_{j})}\right)_{j \in \N}$ that
+    converges to some $\alpha = \left(\alpha_{1},...,\alpha_{n}\right) \in \R^{n}$. This corresponds to a subsequence $u^{(m_{j})}$ of $u^{(m)}$
+    such that
+    \[
+      u^{(m_{j})} \xrightarrow[]{j \rightarrow \infty}\alpha_{1}v_{1}+\cdots+\alpha_{n}v_{n} =: u
+      \quad \text{ with }|\alpha_{1}|+\cdots+|\alpha_{n}| = 1.
+    \]
+    Since the vectors $v_{1},...,v_{n}$ are independent and not all $\alpha_{k}$ vanish, it follows that $u \neq 0$.
+
+    From previous remark, we note that if a sequence of vectors $v_{n}$ converges to $v$, then its norm $\|v_{n}\|$ converges to $\|v\|$.
+    We then have
+    \[
+      \|u^{(m_{j})}\| \xrightarrow[]{j \rightarrow \infty} \|u\| \neq 0.
+    \]
+
+    But by our construction, $\big\|u^{(m)}\big\| \rightarrow 0$ as $m \rightarrow \infty$, so the subsequence 
+    $\left(\big\|u^{(m_{j})}\big\|\right)$ must also converge to zero. This gives a contradiction.
+  \end{proof}
+
+  \begin{remark}
+    \begin{enumerate}[(1)]
+      \item The key point in this proof is to consider the contraposition which gives an inequality that can be interpreted as limit.
+      We normalized the inequality first. 
+      We note that $\mu_{1}v_{1}+\cdots+\mu_{n}v_{n}$, $\sum_{k = 1}^{n}|\mu_{k}|$ gives several hyperplanes in $\R^{n}$.
+      These planes does not go through the origin and have a minimum distance to the origin.
+
+      \item Here we need to note that $\{v_{1},...,v_{n}\}$ needs to a set of independent vectors. 
+      Otherwise we cannot guarantee that $\lambda_{1}v_{1}+\cdots+\lambda_{n}v_{n} \neq 0$.
+
+      \item Also, here we use Theorem of Bolzano and Weierstra{\ss} in $\R^{n}$ which does not necessarily hold for infinite dimensional case.
+    \end{enumerate}
+  \end{remark}
+
+  We can now proceed to prove \textbf{Theorem 0.1}.
+
+  \begin{proof}
+    \textit{(Theorem 0.1)} 
+    Let $V$ be a finite-dimensional vector space, $\|\cdot\|$ be any norm on $V$ and $\{v_{1},...,v_{n}\}$ a basis of $V$.
+    Let $v \in V$ have the representation $v = \lambda_{1}v_{1}+\cdots+\lambda_{n}v_{n}$ with $\lambda_{1},...,\lambda_{n} \in \F$.
+    By the triangle inequality,
+    \[
+      \|v\| = \|\lambda_{1}v_{1}+\cdots+\lambda_{n}v_{n}\| 
+      \leq \sum_{i = 1}^{n}|\lambda_{i}|\|v_{1}\| \leq C \sum_{i = 1}^{n}|\lambda_{i}|  
+    \]
+    where $C:=\mathop{\max}_{1 \leq i \leq n}\|v_{i}\|$ depends only on the basis and ont on $v$.
+    We hence see that for any norm there are constants $C_{1},C_{2} > 0$ such that 
+    \begin{equation}
+      C_{1}\sum_{i = 1}^{n}|\lambda_{i}| \leq \|v\| \leq C_{2}\sum_{i = 1}^{n}|\lambda|,
+    \end{equation}
+    where the first inequality is just $(0.4)$. Given two norms $\|\cdot\|_{1}$ and $\|\cdot\|_{2}$,
+    it follows form there respective inequalities $(0.6)$ that $(0.2)$ holds.
+  \end{proof}
+
+  \begin{remark}
+    Note that if for $\|\cdot\|_{1}$, we have
+    \[C_{11}\sum_{i = 1}^{n}|\lambda_{i}| \leq \|v\|_{1} \leq C_{12}\sum_{i = 1}^{n}|\lambda_{i}|,\]
+    where $C_{11},C_{12} > 0$. For $\|\cdot\|_{2}$, we have
+    \[C_{21}\sum_{i = 1}^{n}|\lambda_{i}| \leq \|v\|_{2} \leq C_{22}\sum_{i = 1}^{n}|\lambda_{i}|,\]
+    where $C_{21},C_{22} > 0$. Then we have
+    \[\frac{C_{11}}{C_{22}}\|v\|_{2} \leq \|v\|_{1} \leq \frac{C_{12}}{C_{21}}\|v\|_{2}.\]
+  \end{remark}
+
+  It is essential that \textbf{Theorem 0.1} assumes that $V$ is a finite-dimensional vector space.
+  In an infinite-dimensional space, it is possible to define non-equivalent norms.
+  \begin{example}
+    Consider the space of continuous functions on $[0,1]$, $C([0,1])$.
+    We can define the two norms
+    \[\|f\|_{\infty} = \mathop{\sup}_{x \in [0,1]}|f(x)|,\quad \|f\|_{1} = \int_{0}^{1}|f(x)|dx.\]
+    We can show that the sequence of continuous functions $f_{n} = e^{-nx}$ converges with respect to $\|f\|_{1}$,
+    but does not converge with respect to $\|f\|_{\infty}$.
+  \end{example}
+
+  We now introduce some important concepts.
+  \begin{definition}
+    Let $(V,\|\cdot\|)$ be a normed vector space and $M \subset V$.
+    \begin{enumerate}[(i)]
+      \item A point $x \in M$ is called an \emph{interior point of $M$} is there exists an $\varepsilon > 0$ 
+      such that $B_{\varepsilon}(x) \subset M$.
+      \item The set of interior points of $M$ is denoted by $\text{int}~M$.
+      \item A point $x \in V$ is called a \emph{boundary point of $M$} if for every $\varepsilon > 0$
+      $B_{\varepsilon}(x) \cap M \neq \emptyset$ and $B_{\varepsilon}(x) \cap (V \backslash M) \neq \emptyset$.
+      \item The set of boundary points of $M$ is denoted by $\partial M$.
+      \item A point that is neither a boundary nor an interior point of $M$ is called an \emph{exterior point of $M$}.
+    \end{enumerate}
+  \end{definition}
+
+  \begin{remark}
+    \begin{enumerate}[(i)]
+      \item An exterior point $x$ of $M$ is an interior point of $V \backslash M$. 
+      First, it is not an interior point, then for every $\varepsilon > 0$, $B_{\varepsilon}(x) \cap (V \backslash M) \neq \emptyset$.
+      Then, it is not an boundary point, so there exists $\varepsilon > 0$, $B_{\varepsilon}(x) \cap M = \emptyset$ or $B_{\varepsilon}(x) \cap (V \backslash M) = \emptyset$.
+      We note from the first argument, we can only have $B_{\varepsilon}(x) \cap M = \emptyset$. 
+      Then there exists $\varepsilon > 0$, $B_{\varepsilon}(x) \subset (V \backslash M)$.
+      We have $x$ is an interior point of $V \backslash M$.
+      \item For given $M$, any point of $V$ is either an interior, boundary or exterior point of $M$.
+    \end{enumerate}
+  \end{remark}
+
+  \begin{definition}
+    Let $(V,\|\cdot\|)$ be a normed vector space and $M \subset V$. 
+    Then $M$ is said to be \emph{closed} if its complement $V \backslash M$ is open.
+  \end{definition}
+
+  \begin{remark}
+    Of course, a set $M$ does not need to be either open or closed.
+    Some sets are open and closed at the same time.
+  \end{remark}
+
+  \begin{example}
+    \begin{enumerate}[(i)]
+      \item A set consisting of a single point, $M = \{a\} \subset V$, is a closed set.
+      \item The empty set $\emptyset \subset V$ is closed. Also, from vacuously true, $\emptyset$ is open.
+      \item The entire space $V$ is a closed set in $V$.
+    \end{enumerate}
+  \end{example}
+
+  \begin{lemma}
+    Let $(V,\|\cdot\|)$ be a normed vector space and $M \subset V$.
+    \begin{enumerate}[(i)]
+      \item The set $M$ is open if and only if $M = \text{int}~M$.
+      \item The set $M$ is closed if and only if $\partial M \subset M$.
+    \end{enumerate}
+  \end{lemma}
+
+  \begin{proof}
+    \begin{enumerate}[(i)]
+      \item We note that $M$ is an open set iff all $x \in M$, there exists $\varepsilon > 0$ such that $B_{\varepsilon}(x) \subset M$.
+      This is the definition that $x$ is an interior point.
+      \item Suppose that $M$ is closed. Then $V \backslash M$ is open. An open set can not contain a boundary point, since
+      all its points are interior points. Hence, $\partial M \cap (V \backslash M) = \emptyset$ and so $\partial M \subset M$.
+      
+      Suppose that $\partial M \subset M$. Then $V \backslash M$ contains only exterior points of $M$. 
+      But an exterior point of $M$ is an interior point of $V \backslash M$, so $V \backslash M$ is open.
+      Hence, $M$ is closed.
+    \end{enumerate}
+  \end{proof}
+
+  \begin{remark}
+    We note that for any set $M \subseteq V$, $\text{int}~M$, $\partial M$ and $\text{int}~(V \backslash M)$ is a partition of $V$.
+  \end{remark}
+
+  \begin{definition}
+    Let $(V,\|\cdot\|)$ be a normed vector space and $M \subset V$.
+    Then
+    \[\overline{M}:=M \cup \partial M\]
+    is called the \emph{closure} of M.
+  \end{definition}
+      
+  \begin{remark}
+    The closure of $M$ is a closed set. We note that $\text{int}~M \subseteq M$ 
+    then $\text{int}~M \cup \partial M \subseteq M \cup \partial M$. 
+    We also have $\text{int}~(V \backslash M) \cap M = \emptyset$ then $M \subseteq \text{int}~M \cup \partial M$.
+    Then we have $M \cup \partial M = \text{int}~M \cup \partial M$.
+    Then $V \backslash (M \cup \partial M) = \text{int}~(V \backslash M)$ which is an open set.
+    We then have $M \cup \partial M$ is a closed set.
+  \end{remark}
+
+  The closure of a set may also be characterized in terms of sequences:
+  \begin{lemma}
+    Let $(V, \|\cdot\|)$ be a normed vector space and $M \subset V$. Then
+    \begin{equation}
+      \overline{M} = \left\{
+        x \in M: \mathop{\exists}_{(x_{n})_{n \in \N}} x_{n} \in M \text{ and }x_{n} \rightarrow x
+      \right\}
+    \end{equation}
+  \end{lemma}
+  
+  \begin{proof}
+    \begin{enumerate}[(i)]
+      \item Suppose that $x \in V$ is such that there exists a sequence $(x_{n})$ with $x_{n} \in M$ and $x_{n} \rightarrow x$.
+      Then for every $\varepsilon > 0$, there exists $N \in \N$ such that $B_{\varepsilon}(x)$ contains $x_{n}$ for $n > N$.
+      Hence, $B_{\varepsilon} \cap M \neq \emptyset$ and so $x$ can not be an exterior point (Not an interior point of $V \backslash M$).
+      This implies $x \in M \cup \partial M$.
+      
+      \item Suppose $x \in M \partial M$. Then for every $\varepsilon > 0$, $B_{\varepsilon}(x) \cap M \neq \emptyset$ 
+      ($x \in B_{\varepsilon}(x)$ for $x \in M$ and from definition of $x \in \partial M$).
+      Choose $\varepsilon = 1/n$ for $n \in \N \backslash \{0\}$ to find a sequence of points $x_{n} \in B_{1/n}(x) \cap M$.
+      This sequence converges to $x$, so $x$ is in the set on the right-hand side of $(0.7)$.
+    \end{enumerate}
+  \end{proof}
+
+  Recall the following definition of continuity in normed vector spaces:
+  \begin{definition}
+    Let $(U,\|\cdot\|_{1})$ and $(V,\|\cdot\|_{2})$ be normed vector spaces and $f:U \rightarrow V$ a function.
+    Then $f$ is \emph{continuous at $a \in U$} if 
+    \begin{equation}
+      \mathop{\forall}_{\varepsilon > 0}\mathop{\exists}_{\delta > 0}\mathop{\forall}_{x \in U}\|x-a\|_{1} < \delta
+      \Rightarrow \|f(x)-f(a)\|_{2} < \varepsilon
+    \end{equation}
+  \end{definition}
+
+  Of course, we can prove as usual the following:
+  \begin{theorem}
+    Let $(U,\|\cdot\|_{1})$ and $(V,\|\cdot\|_{2})$ be normed vector spaces and $f : U \rightarrow V$ a function.
+    Then $f$ is \emph{continuous at $a \in U$} if and only if 
+    \begin{equation}
+      \mathop{\forall}_{\begin{subarray}~(x_{n})_{n \in \N} \\ x_{n} \in U \end{subarray}}
+        x_{n} \rightarrow a
+      \Rightarrow f(x_{n}) \rightarrow f(a).
+    \end{equation}
+  \end{theorem}
+  
+  \begin{proof}
+    From definition of continuous function, we have for any $\varepsilon > 0$, there exists $\delta>0$ such that
+    \[|x-a| < \delta \Rightarrow |f(x)-f(a)| < \varepsilon.\]
+    Because $x_{n} \rightarrow a$, for $\delta > 0$, we can find $N > 0$ such that
+    \[\mathop{\forall}_{n>N}|x_{n}-a| < \delta,\]
+    which means
+    \[\mathop{\forall}_{n>N}|f(x_{n})-f(a)| < \varepsilon.\]
+    Then $\left(f(x_{n})\right)$ converges to $f(a)$.
+  \end{proof}
+
+  Suppose that $f : M \rightarrow N$, where $M,N$ are any sets. Let $A \subset M$. Then we define the \emph{image of A} by
+  \[
+    f(A) := \{y \in N : y = f(a)~\text{for some}~ x \in A\}.
+  \]
+  In particular, we can write
+  \[
+    \text{ran }f = f(M).  
+  \]
+  Similarly, for $B \subset M$ we define the \emph{pre-image of B} by
+  \begin{equation}
+    f^{(-1)}(B) := \{x \in M:f(x) = y~\text{for some}~y \in B\}.
+  \end{equation}
+
+  \begin{example}
+    \begin{enumerate}[(i)]
+      \item Let $f:\R \rightarrow \R$, $f(x) = \sin x$. Then $f([0,\pi]) = [0,1]$.
+      \item Let $f:\R^{2} \rightarrow \R$, $f(x,y) = x^{2}+y^{2}$. Then
+      \[
+        f^{-1}({1}) = \left\{(x,y) \in \R^{2}:x^{2}+y^{2} = 1\right\}
+      \]
+      (This is a unit circle in $\R^{2}$).
+    \end{enumerate}
+  \end{example}
+
+  It is often useful to characterize continuous maps by using open sets:
+  \begin{theorem}
+    Let $(U,\|\cdot\|_{1})$ and $(V,\|\cdot\|_{2})$ be normed vector spaces and $f:U \rightarrow V$ a function. 
+    Then $f$ is continuous if and only if the pre-image $f^{-1}(\Omega)$ of every open set $\Omega \subset V$ is open.
+  \end{theorem}
+  \marginnote{Why we cannot have $f(\Omega)$ is open for $\Omega \subset U$ that is open?}
+
+  \begin{proof}
+    $(\Rightarrow)$ Let $f$ be continuous and $\Omega \subset V$ open. We will show that $f^{-1}(\Omega)$ is open.
+    Let $a \in f^{-1}(\Omega)$. Then $f(a) \in \Omega$, and since $\Omega$ is open we can find $\varepsilon > 0$
+    such that $B_{\varepsilon}(f(a)) \subset \Omega$.
+
+    Now let $\delta > 0$. By the continuity of $f$ we can choose $\delta$ small enough to ensure that $f(B_{\delta}(a)) \subset B_{\varepsilon}(f(a))$. But then $B_{\delta}(a) \subset f^{-1}(\Omega)$.
+    Since this is true for any $a \in f^{-1}(\Omega)$, it follows that $f^{-1}(\Omega)$ is open.
+
+    $(\Leftarrow)$ Let $f: U \rightarrow V$ be such that the pre-image $f^{-1}(\Omega)$ of every open set $\Omega$ is open.
+    We will show that $f$ is continuous. Let $a \in U$ be arbitrary and fix $\varepsilon > 0$.
+    We want to show that there exists a $\delta > 0$ such that
+    \begin{equation}
+      x \in B_{\delta}(a) \Rightarrow f(x) \in B_{\varepsilon}(f(a)).
+    \end{equation}
+    The set $B_{\varepsilon}(f(a))$ is open, and by assumption $f^{-1}(B_{\varepsilon}(f(a))) \ni a$ is also open.
+    Thus, we can find $\delta > 0$ such that $B_{\delta}(a) \subset f^{-1}(B_{\varepsilon}(f(a)))$.
+    But then we can find $\delta > 0$ for any $\varepsilon > 0$. This means $f$ is a continuous function.
+  \end{proof}
+
+  \begin{example}
+    We show that the function
+    \[
+      \det:\text{Mat}(n \times n; \C) \rightarrow \C, 
+      \quad \det A = \sum_{\pi \in S_{n}}\text{sgn}\, \pi ~ a_{\pi(1)1} \cdots a_{\pi(n)n}
+    \]
+    is continuous.
+
+    In particular, we can choose to use the norm $\|A\| = \max_{i,j}|a_{ij}|$.
+    Then fix $A = (a_{ij}) \in \text{Mat}(n \times n;\C)$ and suppose that $(A_{m})$ is a sequence converging to $A$.
+    Our choice of norm implies that all coefficients converge, $a_{ij}^{(m)} \rightarrow a_{ij}$.
+    Since $\det A$ is a polynomial in the coefficients $a_{ij}$, $\det A_{m} \rightarrow \det A$ and therefore $\det$ is continuous at $A \in \text{Mat}(n \times n;\C)$.
+    
+    Note that the pre-image of the set of non-zero complex numbers is
+    \[
+      \det\nolimits^{-1}(\C\backslash\{0\}) = \text{GL}(n;\C),  
+    \]
+    the \emph{general linear} group of invertible matrices. Since $\C\backslash\{0\}$ is an open set, Theorem 0.8 implies that $\text{GL}(n;\C)$ is an open set in $\text{Mat}(n \times n;\C)$.
+  \end{example}
+
+  We are now interested in generalizing the results of Vv186 that apply to continuous functions on closed intervals to vector spaces.
+  Note that a closed interval in $\R$ is always bounded in the following sense
+  \begin{definition}
+    Let $(V,\|\cdot\|)$ be a normed vector space and $M \subset V$. Then $M$ is said to be \emph{bounded} if there exists some $R > 0$
+    such that $M \subset B_{R}(0)$.
+  \end{definition}
+
+  It turns out that the natural generalization of a closed interval is a little more complicated than just requiring a set to be closed and bounded.
+  \begin{definition}
+    Let $(V,\|\cdot\|)$ be a normed vector space and $K \subset V$.
+    Then $K$ is said to be \emph{compact} if every sequence in $K$ has a convergent subsequence with limit contained in $K$.
+  \end{definition}
+
+  \begin{theorem}
+    Let $(V,\|\cdot\|)$ be a (possibly infinite-dimensional) normed vector space and $K \subset V$. 
+    Then $K$ is closed and bounded.
+  \end{theorem}
+  \begin{proof}
+    We first show that $K$ is closed by establishing $K = \overline{K}$. Let $x \in \overline{K}$.
+    Then there exists a sequence $(x_{n})$ in $K$ converging to $x$. 
+    Since $K$ is compact, $(x_{n})$ has a subsequence $(x_{n_{k}})$ that converges to $x' \in K$.
+    Since $(x_{n})$ converges to $x$, $x = x' \in K$, so $\overline{K} \subseteq K$.
+    From definition, $K \subseteq \overline{K}$, so $K = \overline{K}$ and $K$ is closed.
+
+    Now suppose that $K$ is unbounded. Then for any $n \in \N$ there exists an $x_{n} \in K$ such that $\|x_{n}\|>n$.
+    This gives rise to an unbounded sequence $(x_{n})$. Furthermore, any subsequence of $(x_{n})$ is unbounded, because
+    the norm of a subsequence $\|x_{n_{k}}\|$ is greater than $n_{k}$ and will always diverge.
+    Since a convergent sequence is bounded, we conclude that $(x_{n})$ can not have a convergent subsequence.
+    This implies that $K$ is not compact. By contraposition, if $K$ is compact, then $K$ must be bounded.
+  \end{proof}
+
+  \begin{theorem}
+    Let $(V,\|\cdot\|)$ be a \emphr{finite-dimensional} vector space and let $K \subset V$ be closed and bounded.
+    Then $K$ is compact.
+  \end{theorem}
+  
+  \begin{proof}
+    \marginnote{We summarize this proof : 
+    \begin{enumerate}[(i)]
+      \item since this set is bounded, any sequence has a convergent subsequence; 
+      \item since this set is closed, any convergent sequence converges to a point in $M$.
+    \end{enumerate}}
+    Suppose that $(b_{1},...,b_{n})$ be a basis of $V$ and $K$ closed and compact. Let $(v_{m})$ be a sequence in $K$.
+    Then each sequence term has the representation
+    \[
+      v_{m} = \lambda_{1}^{(m)}b_{1} + \cdots + \lambda_{n}^{(m)}b_{n},
+      \qquad \lambda_{1}^{(m)},...,\lambda_{n}^{(m)} \in \F,\quad m \in \N.  
+    \]
+    By Lemma $0.4$ and the boundedness of $K$, there exists constants $C_{1},C_{2} > 0$ such that
+    \[
+      C_{1} \geq \|v_{m}\| \geq C_{2}\sum_{k = 1}^{n}|\lambda_{k}^{(m)}|.  
+    \]
+    It follows that for each $k$, the sequence $\left(\lambda_{k}^{(m)}\right)$ is bounded.
+    Write 
+    \[\lambda^{(m)} = \left(\lambda_{1}^{(m)},...,\lambda_{n}^{(m)}\right).\]
+    By the Theorem of Bolzano-Weierstra{\ss} in $\R^{n}$, $\left(\lambda^{(m)}\right)$ has a convergent
+    subsequence $\left(\lambda^{(m_{j})}\right)$ so that $(v_{m_{j}})$ converges to some element $v \in \overline{K}$.
+    Since $K$ is closed, $v \in K$. This implies that $K$ is compact.
+  \end{proof}
+
+  Theorem $0.10$ is in general false in infinite-dimensional spaces:
+  \begin{example}
+    Consider the vector space of summable complex sequences,
+    \[
+      I^{1}:=\left\{(a_{n}): \N \rightarrow \C:\sum_{n = 0}^{\infty} |a_{n}|< \infty \right\}.  
+    \]
+    The natural norm is given by
+    \[
+      \|(a_{n})\|_{1} := \sum_{n = 0}^{\infty}|a_{n}|.  
+    \]
+    Then the set 
+    \[
+      \overline{B_{1}(0)} = \left\{(a_{n}) \in I^{1}:\sum_{n = 0}^{\infty}|a_{n}| \leq 1\right\}  
+    \]
+    is closed and bounded, but not compact.
+  \end{example}
+
+  Why are we so interested in compact sets? Well, it turns out that compact sets are natural extensions of closed intervals in $\R$
+  for the purpose of generalizing some major theorems on continuous functions.
+  \begin{theorem}
+    Let $(U,\|\cdot\|_{1})$, $(V,\|\cdot\|_{2})$ be normed vector spaces and $K \subset U$ compact.
+    Let $f: K \rightarrow V$ be continuous. Then $\text{ran}f = f(K)$ is compact in $V$.
+  \end{theorem}
+
+  \begin{proof}
+    Let $(y_{n})$ be a sequence in $f(K)$. Then there exists a sequence $(x_{n})$ in $K$ with $y_{n} = f(x_{n})$.
+    Since $K$ is compact, a subsequence $(x_{n_{k}})$ of $(x_{n})$ converges to some $a \in K$.
+    But because $f$ is continuous the subsequence $(f(x_{n_{k}}))$ of $(y_{n})$ converges to some $f(a) \in f(K)$.
+    Hence, $(y_{n})$ has a convergent subsequence and $f(K)$ is compact.
+  \end{proof}
+
+  \begin{remark}
+    We note the key point is that a continuous function will map a convergent sequence to another convergent sequence.
+  \end{remark}
+
+  \begin{theorem}
+    Let $(V,\|\cdot\|)$ be a normed vector space and $K \subset V$ compact. Let $f: K \rightarrow \R$ be continuous.
+    Then $f$ has a maximum in $K$, i.e., there exists an $x \in K$ such that $f(y) \leq f(a)$ for all $y \in K$.
+  \end{theorem}
+
+  \begin{proof}
+    The range $\text{ran}f = f(K)$ is compact by Theorem $0.11$, so it is closed and bounded by Theorem $0.9$.
+    The lease upper bound $b = \sup f(K)$ exists because $f(K)$ is bounded.
+
+    Since $b$ is the \emph{least} upper bound, $b$ can not be en exterior point of $f(K)$, so $b \in \overline{f(K)}$.
+    Since $f(K)$ is closed, $\overline{f(K)} = f(K)$ and $b \in f(K)$.
+
+    Hence, there exists an $x \in K$ with $f(x) = b$ and $f(y) \leq b$ for all $y \in K$.
+  \end{proof}
+  
+  \begin{remark}
+    We recall that every bounded subset of real numbers has a least upper bound is $P13$ in axiom of real numbers.
+  \end{remark}
+
+  \begin{definition}
+    Let $(U,\|\cdot\|_{1})$ and $(V,\|\cdot\|_{2})$ be normed vector spaces, $\Omega \subset U$ and $f:\Omega \rightarrow V$ a function.
+    Then $f$ is \emph{uniformly continuous in $\Omega$} if
+    \begin{equation}
+      \mathop{\forall}_{\varepsilon > 0} \mathop{\exists}_{\delta > 0} \mathop{\forall}_{x,y \in \Omega}
+      \|x-y\|_{1} < \delta \Rightarrow \|f(x)-f(y)\|_{2}  \varepsilon.
+    \end{equation}
+  \end{definition}
+  (Compare with Definition $0.8$)
+
+  \begin{theorem}
+    Let $(U,\|\cdot\|_{1})$ and $(V,\|\cdot\|_{2})$ be normed vector spaces, $K \subset U$ a compact set and $f:K \rightarrow V$ continuous on $K$.
+    Then $f$ is uniformly continuous on $K$.
+  \end{theorem}
+  
+  \begin{proof}
+    Suppose that $f$ is continuous but not uniformly continuous on $K$. Then
+    \[
+      \mathop{\exists}_{\varepsilon > 0}\mathop{\forall}_{\delta > 0}\mathop{\exists}_{x,y \in K}
+      \|x-y\|_{1} < \delta \wedge \|f(x)-f(y)\|_{2} \geq \varepsilon.  
+    \]
+    Denote this $\varepsilon$ by $\varepsilon_{0}$. Then for each $\delta = 1/n$ there exists vectors $x_{n},y_{n} \in K$ such that
+    \[
+      \|x_{n}-y_{n}\|_{1} < \frac{1}{n} \wedge \|f(x)-f(y)\|_{2} \geq \varepsilon_{0}.  
+    \]
+    Since $K$ is compact, we can consider $(x_{n},y_{n})$ as a sequence of $U^{2}$ vectors. From Theorem of Bolzano Weierstra{\ss},
+    we have there exists a subsequence $(x_{n_{k}},y_{n_{k}})$ converges to $(\xi, \eta)$.
+    Since $\|x_{n_{k}}-y_{n_{k}}\| \leq \frac{1}{n_{k}}$, we see that $\xi = \eta$. 
+    However, then
+    \[
+      x_{n_{k}} \rightarrow \xi \wedge y_{n_{k}} \rightarrow \xi 
+      \wedge \|f(x_{n_{k}})-f(y_{n_{k}})\|_{2} \geq \varepsilon_{0} \nrightarrow 0.  
+    \]
+    Since $K$ is compact, we have $\xi \in K$. Because $f$ is continuous, because $x_{n_{k}} \rightarrow \xi$, 
+    $f(x_{n_{k}}) \rightarrow f(\xi)$, because $y_{n_{k}} \rightarrow \xi$, $f(y_{n_{k}}) \rightarrow f(\xi)$.
+    This contradicts $\|f(x_{n_{k}})-f(y_{n_{k}})\|_{2} \geq \varepsilon_{0}$.
+  \end{proof}
+  
+  \begin{remark}
+    Note that $K$ is compact guarantees that $f$ is continuous at $\xi$.
+  \end{remark}
+  
+  \newpage
+  \part{Functions and Derivatives}
+  To represent a function $f:\R^{2} \rightarrow \R$, i.e., a real function of two variables. One method is using a three-dimensional
+  graph showing and $(x_{1},x_{2},z)$-axes and plotting $z = f(x_{1},x_{2})$.
+
+  Another representation for functions $f:\R^{2} \rightarrow \R$ is so-called \emph{contour plot}.
+  In this two-dimensional graph we plot curves
+  \[C_{\alpha} = f^{-1}(\{\alpha\})\]
+  for several values of $\alpha$. These are the pre-image sets of $\{\alpha\}$.
+
+  In the hamiltonian formulation of analytical mechanics, one defined a so-called \emph{Hamilton function} $H$ for a mechanical system.
+  We have
+  \[H = T+V\]
+  where $T$ is kinetic energy and $V$ is potential energy. $H$ remains constant if the system satisfies the law of energy conservation.
+  
+  In the hamiltonian formulation of mechanics, the essential variables of a system are the position $x$ and the momentum $p$.
+  The variables are tracked in a so-called \emph{phase space} $\R_{x}^{n} \times \R_{p}^{n} = \R_{(x,p)}^{2n}$, where typically, $n = 1,2$ or 3.
+  The time-evolution of the system is represented through \emph{phase curves} in $\R^{2n}$, which are given by the contour lines of $H$,
+  which is regarded as a function $\R^{2n} \rightarrow \R$. In other words, a phase curve is the set $H^{-1}(E)$, where $E$ is the conserved
+  energy of the system.
+
+  \begin{example} 
+    For the simple harmonic oscillator, the kinetic energy is given by $T = \frac{1}{2}mv^{2} = p^{2}/2m$ and the potential function
+    is given by $V = \frac{k}{2}x^{2}$, so
+    \[H(x,p) = \frac{1}{2m}p^{2}+\frac{k}{2}x^{2}.\]
+  \end{example}
+
+  In the rest of this term we will develop calculus for ``functions of multiple variables''.
+  This generally means function defined on (a subset of) $\R^{n}$, but it is not any more difficult to treat functions defined
+  on finite-dimensional vector spaces.
+
+  Throughout the following discussion, we assume that $V$ and $X$ denote finite-dimensional, normed vector spaces.
+  The concrete norm will be irrelevant, as all norms are equivalent (see Theorem $0.1$).
+  We will consider first the derivative of a function
+  \[f:X \rightarrow V.\]
+
+  \begin{definition}
+    Let $f : X \rightarrow V_{1}$, $g : X \rightarrow V_{2}$ and $x_{0} \in X$. We say that
+    \[
+      f(x) = o(g(x)) \quad \text{ as } x \rightarrow x_{0} \quad \Leftrightarrow \quad 
+      \lim_{x \rightarrow x_{0}}\frac{\|f(x)\|_{V_{1}}}{\|g(x)\|_{V_{2}}} = 0. 
+    \]
+  \end{definition}
+
+  \begin{definition}
+    Let $X,V$ is finite-dimensional vector spaces and $\Omega \subset X$ an open set. Then a map $f : \Omega \rightarrow V$ is called
+    \emph{differentiable at $x \in \Omega$} if there exists a liner map $L_{x} \in \L(X,V)$ such that
+    \begin{equation}
+      f(x+h) = f(x) + L_{x}h + o(h) \qquad \text{ as } h \rightarrow 0.
+    \end{equation}
+    In this case we call $L_{x}$ the \emph{derivative of $f$ at $x$} and write
+    \[
+      L_{x} = Df|_{x} = df|_{x}.  
+    \]
+    We say that $f$ is differentiable on $\Omega$ if it is differentiable for every $x \in \Omega$.
+  \end{definition}
+
+  \begin{remark}
+    \begin{itemize}
+      \item Just as in proof of 186 Lemma $3.1.2$ we can show that the derivative is uniquely defined by $()$.
+      \item We may also copy the proof of Lemma 186 $3.1.8$ to see that every differentiable function is continuous.
+    \end{itemize}
+  \end{remark}
+
+  If $f$ is differentiable on $\Omega$, we may regard $Df$ as a map
+  \[
+    Df:\Omega \rightarrow \L(X,V),\qquad x \mapsto Df|_{x}.  
+  \]
+
+  \begin{definition}
+    We define
+    \[
+      \begin{aligned}
+        C(\Omega,V) &:= \{f:\Omega \rightarrow V: f \text{ is continuous}\},\\
+        C^{1}(\Omega, V) &:= \{f:\Omega \rightarrow V: f \text{ is differentiable and }Df\text{ is continuous}\}.\\
+      \end{aligned}
+    \]
+  \end{definition}
+
+  We may thus regard the \emph{derivative} $D$ as a (linear) map
+  \[
+    D:C^{1}(\Omega,V) \rightarrow C(\Omega,\L(X,V)),\qquad f \mapsto Df.  
+  \]
+
+  \begin{example}
+    Let $X,V$ be finite-dimensional vector spaces and $L \in \L(X,V)$ a linear map. Then
+    \[L(x+h) = Lx+Lh \xlongequal[]{!} Lx + DL|_{x}h + o(h) \qquad (h \rightarrow 0),\]
+    so the derivative of $L$ at any $x \in X$ is $DL|_{x} = L$.
+  \end{example}
+
+  \begin{example}
+    Explicit instances of Example $1$ are, e.g.,
+    \begin{itemize}
+      \item Let $X = V = \C$ be regarded as real vectors spaces and $f:z \to \overline{z}$ be the (then linear) complex conjugation.
+      Then for $z,h \in \C$
+      \[
+        \overline{z+h} = \overline{z} + \overline{h},  
+      \]
+      so $Df|_{z}(h) = \overline{h}$. Note $Df$ is the complex conjugation.
+      
+      \item Regard $A \in \text{Mat}(2 \times 2; \R)$ as a linear map $\R^{2} \to \R^{2}$. Then for $x,h \in \R^{2}$
+      \[
+        A(x+h) = Ax + Ah,
+      \]
+      so $DA|_{x}(h) = Ah$.
+
+      \item Let $tr : \text{Mat}(n \times n;\C) \to \C$ be the \emph{trace} of a squared matrix, i.e.,
+      \[
+        \text{tr}\, A = \text{tr}(a_{ij})_{1 \leq i,j \leq n} = \sum_{i = 1}^{n}a_{ii}.  
+      \]
+      Then the trace is linear and for $A,H \in \text{Mat}(n \times n;\C)$
+      \[
+        D~\text{tr}|_{A}H = \text{tr}\, H.  
+      \]
+    \end{itemize}
+  \end{example}
+
+  \begin{example}
+    Some examples of derivatives of non-linear maps are as follows:
+    \begin{itemize}
+      \item Let $X = V = \C$ be regarded as real vector spaces and $f:z \to z^{2}$.
+      Then for $z,h \in \C$
+      \[
+        (z+h)^{2} = z^{2}+2zh+h^{2},  
+      \]
+      so $Df|_{z}(h) = 2zh$.
+
+      \item Let $f:\R^{2} \to \R$ be given by 
+      \[
+        f(x) = f(x_{1},x_{2}) = x_{1} + 2x_{2}x_{2} + x_{2}^{2}.  
+      \]
+      Then, for $h = (h_{1}, h_{2}) \in \R^{2}$ and $x \in \R^{2}$,
+      \[
+        \begin{aligned}
+          f(x+h) &= f(x_{1}+h_{1}, x_{2}+h_{2})\\
+                 &= x_{1}+h_{1} + 2(x_{2}+h_{2})(x_{1}+h_{1}) + (x_{2}+h_{2})^{2}\\
+                 &= f(x) + h_{1} + 2(h_{2}x_{1}+x_{2}h_{1}+x_{2}h_{2})+2h_{1}h_{2}+h_{2}^{2}\\
+        \end{aligned}  
+      \]
+      
+      In
+      \[
+        f(x+h) = f(x) + \underbrace{h_{1} + 2(h_{2}x_{1} + h_{1}x_{2} + h_{2}x_{2})}_{=:L_{(x_{1},x_{2})h}} + 2h_{1}h_{2} + h_{2}^{2}
+      \]
+      the term $L_{(x_{1},x_{2})}$ is clearly linear in $h$, while
+      \[
+        \lim_{h \rightarrow 0}\frac{\|2h_{1}h_{2}\|_{\R}}{\|h\|_{\R^{2}}}  = 
+        \lim_{h_{1},h_{2} \to 0} \frac{|2h_{1}h_{2}|}{\sqrt{h_{1}^{2}+h_{2}^{2}}} = 
+        2 \lim_{h_{1},h_{2} \to 0}\frac{|h_{2}|}{\sqrt{1+(h_{2}/h_{1})^{2}}}.  
+      \]
+      Since $|h_{2}| \to 0$ as $h_{2} \to 0$ and $1/\sqrt{1+(h_{2}/h_{1})^{2}}$ i bounded, we see that
+      \[
+        \lim_{h \to 0} = \frac{\|2h_{1}h_{2}\|_{\R}}{\|h\|_{\R^{2}}} = 0,  
+      \]
+      and so $2h_{1}h_{2} = o(h)$ as $h \to 0$. Similarly, we show that $h^{2} = o(h)$, so we conclude
+      \[
+        Df|_{x}h = (1+2x_{2})h_{1} + 2(x_{1}+x_{2})h_{2}.  
+      \]
+    \end{itemize}
+  \end{example}
+  
+  \begin{remark}
+    Notice that we may express the derivative as a $1 \times 2$ matrix,
+    \[
+      Df|_{x}h = \left(1+2x_{2},\,2(x_{1}+x_{2})\right)\begin{pmatrix}h_{1}\\h_{2}\end{pmatrix}.  
+    \]
+    This is of course not surprising; if $X = \R^{n}$ and $V = \R^{m}$, i.e., we are considering a function
+    \[
+      f:\R^{n} \supset \Omega \to \R^{m}, \qquad f(x_{1},...,x_{n}) = \begin{pmatrix} f_{1}(x_{1},...,x_{n}) \\ \vdots \\ f_{m}(x_{1},...,x_{n}) \end{pmatrix},
+    \]
+    then its derivative at $x \in \Omega$ (if exists) is 
+    \[
+      Df|_{x} \in \L(\R^{n}, \R^{m}) \simeq \text{Mat}(m \times n;\R).
+    \]
+    How to obtain this matrix? Denote by $e_{j}$ the $j$th standard basis vector in $\R^{n}$ or $\R^{m}$.
+    We now consider the columns of $Df|_{x}$, which are given by $Df|_{x}e_{j},\,j = 1,...,n$.
+
+    Assuming that $f$ is differentiable, for any $h \in R$, $x \in \R^{n}$ and $j = 1,...,n$ we have
+    \[f(x+he_{j}) = f(x) + Df|_{x}(he_{j}) + o(h),\]
+    which we may rewrite as
+    \[
+      Df|_{x}e_{j} = \frac{1}{h}(f(x+he_{j})-f(x)) + o(1) = \frac{1}{h}\sum_{k = 1}^{m}(f_{k}(x+he_{j})-f_{k}(x))e_{k}+o(1).
+    \]
+    The $(i,j)$the element of $Df|_{x}$ is given by $\scp{e_{i}}{Df|_{x}e_{j}}$,
+    \[
+      (Df|_{x})_{ij} = \scp{e_{i}}{Df|_{x}e_{j}} = \frac{1}{h}(f_{i}(x+he_{j})-f_{i(x)}) + o(1).
+    \]
+    We now take the limit $h \to 0$ to obtain
+    \[
+      (Df|_{x})_{ij} = \scp{e_{i}}{Df|_{x}e_{j}} = \lim_{h \to 0} \frac{f_{i}(x+he_{j}) - f_{i}(x)}{h}.
+    \]
+    This gives us an intuition on $Df$.
+  \end{remark}
+
+  \begin{definition}
+    Let $\Omega \subset \R^{n}$ and $f:\Omega \to \R$ be differentiable on $\Omega$. 
+    We then define the \emph{partial derivative with respect to $x_{j}$ at $x \in \Omega$} by
+    \[
+      \begin{aligned}
+        \left.\frac{\partial f}{\partial x_{j}}\right|_{x} &:= \lim_{h \to 0} \frac{f(x+he_{j})-f(x)}{h}\\
+        &= \lim_{h \to 0} \frac{f(x_{1},...,x_{j-1},x_{j}+h,x_{j+1},...,x_{n})-f(x)}{h}
+      \end{aligned}  
+    \]
+    In this notation,
+    \[
+      (Df|_{x})_{ij} = \frac{\partial f_{i}}{\partial x_{j}}  
+    \]
+    or rather
+    \[
+      Df|_{x} = \left.\begin{pmatrix}
+          \frac{\partial f_{1}}{\partial x_{1}} & \cdots & \frac{\partial f_{1}}{\partial x_{n}} \\
+          \vdots & & \vdots \\
+          \frac{\partial f_{m}}{\partial x_{1}} & \cdots & \frac{\partial f_{m}}{\partial x_{n}} \\
+      \end{pmatrix}\right|_{x} 
+    \]
+  \end{definition}
+
+  \begin{remark}
+    There are several notations for the partial derivatives of a function. If $f : \R^{n} \to \R$, we may use any of the following:
+    \[
+      \frac{\partial f}{\partial x_{j}} = \partial_{x_{j}}f = \partial_{j}f = f_{x_{j}} = f_{j}  
+    \]
+    to denote differentiation w.r.t. the variable $x_{j}$. 
+    
+    In practice, we calculate the partial derivative w.r.t. $x_{j}$ by \emph{holding all other variables constant} and 
+    simply differentiating $f$ as a function of $x_{j}$.
+  \end{remark}
+
+  \begin{example}
+    Let $f(x_{1},x_{2},x_{3}) = x_{1}\sin(x_{1},x_{2},x_{3}) + 3x_{2}^{2}x_{1}$. Then
+    \[
+      \begin{aligned}
+        \frac{\partial f}{\partial x_{1}} &= \sin(x_{1}x_{2}x_{3}) + x_{1}x_{2}x_{3}\cos(x_{1}x_{2}x_{3}) + 3x_{2}^{2},\\
+        \frac{\partial f}{\partial x_{2}} &= x_{1}^{2}x_{3}\cos(x_{1}x_{2}x_{3}) + 6x_{2}x_{1},\\
+        \frac{\partial f}{\partial x_{3}} &= x_{1}^{2}x_{2}\cos(x_{1}x_{2}x_{3}).\\
+      \end{aligned}  
+    \]
+  \end{example}
+
+  We note that if $Df|_{x}$ exists, we may write it as a matrix of partial derivatives. 
+  However, it is not clear whether the existence of all partial derivatives implies the existence of the derivative $Df|_{x}$.
+  Thus it is useful to consider the matrix of partial derivatives on its own; in fact, it deserves a special designation.
+
+  \begin{definition}
+    Let $\Omega \subset \R^{n}$ and $f:\Omega \to \R^{m}$. Assume that all partial derivatives $\frac{\partial f_{i}}{\partial x_{j}}$ of $f$ exists at $x \in \Omega$.
+    The matrix
+    \[
+      J_{f}(x):=
+      \left.\begin{pmatrix}
+        \frac{\partial f_{1}}{\partial x_{1}} & \cdots & \frac{\partial f_{1}}{\partial x_{n}} \\
+        \vdots & & \vdots \\
+        \frac{\partial f_{m}}{\partial x_{1}} & \cdots & \frac{\partial f_{m}}{\partial x_{n}} \\
+      \end{pmatrix}\right|_{x}  
+    \]
+    called the \emph{Jacobian} of $f$.
+  \end{definition}
+
+  \begin{remark}
+    If the derivative $Df|_{x} \in \L(\R^{n},\R^{m})$ exists, $J_{f}(x) \in \text{Mat}(m \times n;\R)$ is the representing
+    matrix of $Df|_{x}$ w.r.t. the standard bases in $\R^{n}$ and $\R^{m}$.
+  \end{remark}
+
+  \begin{example}
+    Let $f:\R^{2} \to \R$ be given by $f(x_{1},x_{2}) = (x_{1}^{2}+x_{2}^{2},x_{2}-x_{1})$. Then the partial derivatives are
+    \[
+      \begin{aligned}
+        \frac{\partial f_{1}}{\partial x_{1}} = \frac{\partial}{\partial x_{1}}(x_{1}^{2}+x_{2}^{2}) = 2x_{1},\\
+        \frac{\partial f_{2}}{\partial x_{1}} = \frac{\partial}{\partial x_{1}}(x_{2}-x_{1}) = -1,\\
+      \end{aligned}
+      \qquad\qquad
+      \begin{aligned}
+        \frac{\partial f_{1}}{\partial x_{2}} = \frac{\partial}{\partial x_{2}}(x_{1}^{2}+x_{2}^{2}) = 2x_{2},\\
+        \frac{\partial f_{2}}{\partial x_{2}} = \frac{\partial}{\partial x_{2}}(x_{2}-x_{1}) = 1.\\
+      \end{aligned}
+    \]
+    The Jacobian is given by
+    \[
+      J_{f}(x_{1},x_{2}) = \begin{pmatrix}
+        2x_{1} & 2x_{2} \\
+        -1 & 1 \\
+      \end{pmatrix}  
+    \]
+    A natural question that arises is, ``Does the existence of $J_{f}(x)$ imply the differentiability of $f$ at $x$?''
+  \end{example}
+  However, the answer is negative. The existence of partial derivative is not a condition strong enough to guarantee the exists of derivative.
+
+  \begin{theorem}
+    Let $\Omega \subset \R^{n}$ be an open set and $f:\Omega \to \R^{m}$ such that all partial derivatives $\partial_{x_{j}}f$ exist on $\Omega$.
+    \begin{enumerate}[(i)]
+      \item If all partial derivatives are bounded (there exists a constant $M > 0$ such that $|\partial_{x_{j}}f_{i}| \leq M$ on $\Omega$), then $f$ is continuous i.e., $f \in C(\Omega, \R^{m})$.
+      \item If all partial derivatives are continuous on $\Omega$, then $f$ is continuously differentiable on $\Omega$, i.e., $f \in C^{1}(\Omega, \R^{m})$. In particular,
+      \[
+        Df|_{x} = J_{f}(x) = \left.\begin{pmatrix}
+          \frac{\partial f_{1}}{\partial x_{1}} & \cdots & \frac{\partial f_{1}}{\partial x_{n}} \\
+          \vdots & & \vdots \\
+          \frac{\partial f_{m}}{\partial x_{1}} & \cdots & \frac{\partial f_{m}}{\partial x_{n}} \\
+        \end{pmatrix}\right|_{x}  
+      \]
+      for all $x \in \Omega$.
+    \end{enumerate}
+  \end{theorem}
+
+  \begin{proof}
+    Let
+    \[
+      f:\R^{n} \to \R^{m}, \qquad f(x) = \begin{pmatrix} f_{1}(x_{1},...,x_{n}) \\ \vdots \\ f_{m}(x_{1},...,x_{n}) \end{pmatrix}.  
+    \]
+    Here we need an important equation to use properties of partial derivatives to make arguments on $f(x+h)-f(x)$.
+    We that $n = 2$ and consider $f_{i}(x)$
+    \[
+      \begin{aligned}
+        f_{i}(x+h)-f_{i}(x) &= f_{i}(x_{1}+h_{1},x_{2}+h_{2}) - f_{i}(x_{1},x_{2})\\
+        &= [f_{i}(x_{1}+h_{1},x_{2}+h_{2})-f_{i}(x_{1}+h_{1},x_{2})] + [f_{i}(x_{1}+h_{1},x_{2})-f_{i}(x_{1},x_{2})]\\
+      \end{aligned}
+    \]
+    \marginnote{We need $\Omega$ is an open set such that $(x_{1}+h_{1},y) \in \Omega$ is possible for small enough $h$.}
+    We want to apply Mean Value Theorem $3.2.7$ of Vv186, define
+    \[
+      g:\R \to \R,\qquad g(y) = f_{i}(x_{1}+h_{1},y).
+    \]
+    Then there exists a $\theta_{2} \in (x_{2},x_{2}+h_{2})$ such that
+    \[
+      \begin{aligned}
+        f_{i}(x_{1}+h_{1},x_{2}+h_{2}) - f_{i}(x_{1}+h_{1},x_{2}) &= g(x_{2}+h_{2})-g(x_{2})\\
+        &= h_{2} \cdot g'(\theta_{2}) \\
+        &= h_{2} \partial_{2}f_{i}(x_{1}+h_{1},x_{2}+\tau_{2}h_{2})\\
+      \end{aligned}
+    \]
+    where we have chosen $\tau_{2} \in (0,1)$ such that $\theta_{2} = x_{2} + \tau_{2}h_{2}$.
+
+    Similarly, we find that
+    \[
+      f_{i}(x_{1}+h_{1},x_{2}) - f_{i}(x_{1},x_{2}) = h_{1}\frac{\partial f_{i}}{\partial x_{1}}(x_{1}+\tau_{1}h_{1},x_{2})  
+    \]
+    for some $\tau_{1} \in (0,1)$. We then have
+    \[
+      f_{i}(x+h)-f_{i}(x) = h_{1}\frac{\partial f_{i}}{\partial x_{1}}(x_{1}+\tau_{1}h_{1},x_{2}) + 
+      h_{2}\frac{\partial f_{i}}{\partial x_{2}}(x_{1}+h_{1},x_{2}+\tau_{2}h_{2}).  
+    \]
+    Generalizing to $n \geq 2$, we ave constants $\tau_{1},...,\tau_{n} \in (0,1)$ such that
+    \[
+      \begin{split}
+        f_{i}(x+h)-f_{i}(x) =& f_{i}(x_{1}+h_{1},x_{2}+h_{2},...,x_{n}+h_{n}) - f_{i}(x_{1},x_{2}+h_{2},...,x_{n}+h_{n}) \\
+                             &+ f_{i}(x_{1},x_{2}+h_{2},...,x_{n}+h_{n}) - f_{i}(x_{1},x_{2},x_{3}+h_{3},...,x_{n}+h_{n}) \\
+                             &+ \cdots + f_{i}(x_{1},x_{2},...,x_{n-1},x_{n}+h_{n}) - f_{i}(x_{1},x_{2},...,x_{n}) \\
+                            =&h_{1}\partial_{1} f_{i}(x_{1}+\tau_{1}h_{1},x_{2}+h_{2},...,x_{n}+h_{n})\\
+                             &+ h_{2}\partial_{2} f_{i}(x_{1},x_{2}+\tau_{2}h_{2},x_{3}+h_{3},...,x_{n}+h_{n})\\
+                             &+\cdots+h_{n}\partial_{n}f_{i}(x_{1},x_{2},...,x_{n}+\tau_{n}h_{n}).\\
+      \end{split}   
+    \]
+    We introduce notation
+    \[
+      u^{j} = (x_{1},...,x_{j-1},x_{j}+\tau_{j}h_{j},x_{j+1}+h_{j+1},...,x_{n}+h_{n})  
+    \]
+    for $j = 1,...,n$.
+
+    We then can write the previous equation as
+    \[
+      f_{i}(x+h)-f_{i}(x) = \sum_{j = 1}^{n}h_{j}\partial_{j}f_{i}(u^{j}).  
+    \]
+
+    We proceed with the proof of the theorem.
+    \begin{enumerate}[(i)]
+      \item Suppose that the partial derivatives are bounded. We want ot prove that $f$ is continuous at $x \in \Omega$, i.e.,
+      \[\lim_{h \to 0}f(x+h) = f(x)\]
+      where are are free to choose arbitrary norms in $\R^{n}$ and $\R^{m}$ for the convergence. 
+      In both spaces we choose the maximum norm $\|\cdot\|_{\infty}$:
+      \[
+        \begin{aligned}
+          \|f(x+h)-f(x)\|_{\infty} &= \mathop{\max}_{i = 1,...,m}|f_{i}(x+h)-f_{i}(x)|  \\
+                                   & \leq m \cdot \mathop{\max}_{i = 1,...,m} \big|\sum_{j = 1}^{n}h_{j}\partial_{j}f_{i}(u^{j})\big|\\
+        & \leq m \cdot \mathop{\max}_{i = 1,...,m} n \cdot \mathop{\max}_{j = 1,...,n}h_{j} \cdot 
+      \mathop{\max}_{\begin{subarray}~i = 1,...,m \\ j = 1,...,n \end{subarray}} \mathop{\sup}_{x \in \Omega}
+        \left|\frac{\partial f_{i}}{\partial x_{j}}(x)\right| \\
+        & \leq m \cdot n \cdot \|h\|_{\infty} \cdot M \xrightarrow[]{h \to 0} 0.
+        \end{aligned}
+      \]
+
+      \item Write
+      \[
+        L = \left(\frac{\partial f_{i}}{\partial x_{j}}\right)_{\begin{subarray}
+          ~i = 1,...,m \\ j = 1,...,n
+        \end{subarray}} = (L_{ij})_{\begin{subarray}
+          ~i = 1,...,m \\ j = 1,...,n
+        \end{subarray}}
+      \]
+      for the Jacobian. We want to show that
+      \[
+        f(x+h)-f(x)-Lh = o(h) \qquad \text{ as }h \to 0.  
+      \]
+      We again choose the maximum norm $\|\cdot\|_{\infty}$ to establish the convergence. We have the following estimate:
+      \[
+        \begin{aligned}
+          \|f(x+h)-f(x)-Lh\|_{\infty} &= \mathop{\max}_{i = 1,...,m}\left|f_{i}(x+h)-f_{i}(x)-\sum_{j = 1}^{n}L_{ij}h_{j}\right|\\ 
+          &= \mathop{\max}_{i = 1,...,m}\left|\sum_{j = 1}^{n}h_{j}(\partial_{j}f_{i}(u^{j}) - \partial_{j}f_{i}(x))\right|\\
+          & \leq \|h\|_{\infty} \sum_{j = 1}^{n}
+          \underbrace{\mathop{\max}_{i = 1,...,m}|\partial_{j}f_{i}(u^{j}) - \partial_{j}f_{i}(x)|}
+          _{\to 0 \text{ as }h \to 0}\\
+          &= o(h) \qquad \text{ as }h \to 0.
+        \end{aligned}
+      \]
+      Observe that we use the assumption that $\partial_{j}f_{i}(x)$ is continuous as $x$.
+      This proves that $f$ is differentiable, $L = Df|_{x}$ and $Df|_{x}$ depends continuously on $x$.
+    \end{enumerate}
+  \end{proof}
+
+  \begin{remark}
+    In this proof, we establish the connection between values of functions and its derivatives using Mean Value Theorem.
+    Note we can only apply Mean Value Theorem now on one dimension, so it is necessary to decompose $f(x+h)-f(x)$ in previous form.
+
+    Let $\Omega \subset \R^{n}$ be an open set. Then
+    \[
+      \begin{split}
+        C^{1}(\Omega,\R^{m}) = \{
+          &f : \Omega \to \R^{m} : \partial_{j}f_{i} \text{ is continuous for }j = 1,...,n\\
+          &\text{ and }i = 1,...,m
+        \}.
+      \end{split}
+    \]
+    If $m = 1$, we write $C^{1}(\Omega) := C^{1}(\Omega,\R)$ for short.
+  \end{remark}
+
+  We now establish the product and chain rules for differentiation.
+  
+  To avoid having to re-prove the product rule for various types of products that we will encounter, we first define a generalized
+  product through those properties that we shall need.
+
+  \begin{definition}
+    Let $X_{1},X_{2},V$ be normed vector spaces. A map $\odot : X_{1} \times X_{2} \to V$ is called a \emph{(generalized product)} if
+    \begin{enumerate}
+      \item $\odot$ is bilinear, i.e., linear in each entry and
+      \item $\|u \odot v\|_{V} \leq \|u\|_{X_{1}}\|v\|_{X_{2}}$ for all $u \in X_{1}$, $v \in X_{2}$.
+    \end{enumerate}
+  \end{definition}
+
+  \begin{example}
+    \begin{enumerate}
+      \item The scalar product in $\R^{n}$;
+      \item The cross product $\times:\R^{3} \times \R^{3} \to \R^{3}$;
+      \item For a compact non-empty set $K \subset \R^{n}$ and $f,g \in C(K,\R)$ the pointwise product $f \cdot g \in C(K, \R)$, defined by
+      \[(f \cdot g)(x) = f(x)g(x)\]
+    \end{enumerate}
+  \end{example}
+
+  \begin{theorem}
+    \textit{(Product Rule)} Let $U,X_{1},X_{2},V$ be finite-dimensional vector spaces and $\Omega \subset U$ and open set.
+    Let $f : \Omega \to X_{1}$ ad $g : \Omega \to X_{2}$ be differentiable maps and $\odot : X_{1} \times X_{2} \to V$ a generalized product.
+    Then $f \odot g : \Omega \to V$ is also differentiable and 
+    \begin{equation}
+      D(f \odot g) = (Df) \odot g + f \odot (Dg).
+    \end{equation}
+    At $x \in \Omega$ the right-hand side is interpreted as a linear map $U \to V$
+    \begin{equation}
+      u \mapsto D(f \odot g)|_{x}u = (Df|_{x}u) \odot g(x) + f(x) \odot (Dg|_{x}u).
+    \end{equation}
+  \end{theorem}
+
+  \begin{proof}
+    The proof is similar ot that for the product rule for functions of one variable.
+    We telescope the difference,
+    \[
+      \begin{aligned}
+        &f(x+h) \odot g(x+h) - f(x) \odot g(x)\\
+        =& f(x+h) \odot (g(x+h)-g(x)) + (f(x+h)-f(x)) \odot g(x) \\
+        =& (f(x)+O(h)) \odot (Dg|_{x}h+o(h)) + (Df|_{x}h + o(h)) \odot g(x)\\
+      \end{aligned}
+    \]
+    as $h \to 0$. Here we use $Df|_{x}+o(h) = O(h)$. Extending the relevant limit theorems form the pointwise 
+    product to the generalized product, we have
+    \[
+      \begin{aligned}
+        &f(x+h) \odot g(x+h) - f(x) \odot g(x)\\
+        =& f(x) \odot (Dg|_{x}h) + O(\|h\|^{2}) + o(h) + (Df|_{x}h) \odot g(x) + o(h)\\
+        =& f(x) \odot (Dg|_{x}h) + (Df|_{x}h) \odot g(x) + o(h)\\
+      \end{aligned}
+    \]
+  \end{proof}
+
+  \begin{remark}
+    To have $O(h) \odot (Dg|_{x}h+o(h)) = O(\|h\|^{2})$, we need the property of generalized product.
+  \end{remark}
+
+  \begin{theorem}
+    \textit{(Chain Rule)}
+    Let $U,X,V$ be finite-dimensional vector spaces and $\Omega \subset U$, $\Sigma \subset X$ open sets.
+    Let $g : \Omega \to \Sigma$ and $f : \Sigma \to V$ ve differentiable maps.
+    Then the composition $f \circ g : \Omega \to V$ is also differentiable and for all $x \in \Omega$
+    \begin{equation}
+      D(f \circ g)|_{x} = Df|_{g(x)} \circ Dg|_{x},
+    \end{equation}
+    where the right-hand side is a composition of linear maps.
+  \end{theorem}
+
+  \begin{proof}
+    We assume that $g$ is differentiable at $x$ we have
+    \[
+      (f \circ g)(x+h) = f(g(x+h) + Dg|_{x}h + o(h))  
+    \]
+    as $h \to 0$. Writing $H = Dg|_{x}h + o(h)$ and using the differentiability of $f$ at $g(x)$, we have
+    \[
+      (f \circ g)(x+h) = f(g(x)+H) = f(g(x)) + Df_{g(x)}H + o(H).  
+    \]
+    Now
+    \[
+      H = Dg|_{x}h + o(h) = O(h) + O(h) = O(h)  
+    \]
+    as $h \to 0$, so $o(H) = o(O(h)) = o(h)$ as $h \to 0$.
+
+    We hence have
+    \[
+      \begin{aligned}
+        (f \circ g)(x+h) &= f(g(x)) + Df_{g(x)}H + o(h) \\
+        &= f(g(x)) + Df|_{g(x)} \circ (Dg|_{x}h+o(h)) + o(h) \\
+        &= f(g(x)) + Df|_{g(x)} \circ Dg|_{x}h + o(h) \\
+      \end{aligned}
+    \]
+    as $h \to 0$, so $D(f \circ g)(x) = Df_{g(x)} \circ Df_{x}$.
+  \end{proof}
+
+  \begin{example}
+    Consider the polar coordinates $(r, \phi) \in (0,\infty) \times [0, 2\pi)$, defined through the map
+    \[
+      \Phi(r, \phi) = \begin{pmatrix} r \cos\phi \\ r \sin\phi \end{pmatrix}. 
+    \]
+    Then 
+    \[
+      D\Phi|_{(r, \phi)} = \begin{pmatrix}
+        \frac{\partial \Phi_{1}}{\partial r} & \frac{\partial \Phi_{1}}{\partial \phi} \\
+        \frac{\partial \Phi_{2}}{\partial r} & \frac{\partial \Phi_{2}}{\partial \phi} \\
+      \end{pmatrix}
+      = \begin{pmatrix}
+        \cos \phi & -r \sin \phi \\
+        \sin \phi & r \cos \phi \\
+      \end{pmatrix}.
+    \]
+    Next, consider the map $U : \R^{2} \to \R$, $(x_{1}, x_{2}) \mapsto x_{1}^{2}+x_{2}^{2}$. The derivative is
+    \[
+      DU|_{x} = \left(\frac{\partial U}{\partial x_{1}}, \frac{\partial U}{\partial x_{2}}\right) 
+      = (2x_{1}, 2x_{2}) 
+    \]
+    Now $U \circ \Phi = (r\cos\phi)^{2} + (r\sin\phi)^{2} = r^{2}$. Clearly, $D(U \circ \Phi)|_{(r, \phi)} = (2r, 0)$.
+    We can also apply the chain rule:
+    \[
+      \begin{aligned}
+        D(U \circ \Phi)|_{(r, \phi)} &= DU|_{(r \cos \phi, r \sin \phi)}D\Phi|_{r, \phi} \\
+        &= (2r \cos \phi, 2r \sin \phi) \begin{pmatrix}
+          \cos \phi & -r \sin \phi \\
+          \sin \phi & r \cos \phi \\
+        \end{pmatrix} \\
+        &= (2r \cos^{2} \phi + 2r \sin^{2} \phi, -2r^{2} \cos \phi \sin \phi + 2r^{2} \sin \phi \cos \phi) \\
+        &= (2r, 0)\\
+      \end{aligned}
+    \]
+  \end{example}
+
+  In this part, we first consider the integration of a vector-space-valued but defined on $I = [a,b] \subset \R$.
+  \[
+    \int_{a}^{b}f(x)dx, \qquad \text{where }f : [a,b] \to V.  
+  \]
+  Fortunately, the procedure is completely analogous to that of functions $f : \R \to \R$,
+  at least for the regulated integral: we define step functions on $[a,b]$ with respect to a partition $P$
+  by setting them constant on sub-intervals of the partition:
+  \begin{definition}
+    A $V$ be a real or complex vector space. A function $f : [a,b] \to V$ is called a \emph{step function with respect to a partition 
+    $P = (a_{0},...,a_{n})$} if there exists elements $y_{i} \in V$ such that $f(t) = y_{i}$ whenever $a_{i-1} < t < a_{i}$, 
+    $i = 1,...,n$. We denote the set of all step functions by $\text{Step}([a,b], V)$.
+  \end{definition}
+  \begin{remark}
+    Note values on the partition boundaries can be arbitrary.
+  \end{remark}
+
+  \begin{example}
+    The map
+    \[
+      f : [0,1] \to \R^{2}, \qquad f(x) = \left\{
+        \begin{aligned}
+          & \begin{pmatrix} 0 \\ 1/2 \end{pmatrix} & 0 \leq x < 1/2 \\
+          & \begin{pmatrix} 1 \\ 1 \end{pmatrix} & x = 1/2 \\
+          & \begin{pmatrix} 2 \\ 0 \end{pmatrix} & 1/2 < x \leq 1 \\
+        \end{aligned}
+        \right.  
+    \]
+    is a step function.
+  \end{example}
+
+  \begin{definition}
+    Let $I \subset \R$ be an interval and $(V, \|\cdot\|_{V})$ a normed vector space.
+    We say that a function $f : I \to V$ is \emph{bounded} if
+    \begin{equation}
+      \|f\|_{\infty} := \mathop{\sup}_{x \in I}\|f(x)\|_{V} < \infty.
+    \end{equation}
+    The set of all bounded functions $f : I \to V$ is denoted $L^{\infty}(I,V)$.
+  \end{definition}
+
+  \begin{example}
+    The map
+    \[
+      f : \R \to \R^{2}, \qquad f(t) = \begin{pmatrix} 
+        \sin t \\ e^{-t^{2}}
+      \end{pmatrix}
+    \]
+    is bounded map. To see this, we endow $\R^{2}$ with the norm $\|x\|_{1} := |x_{1}| + |x_{2}|.$ 
+    (Since all norms in $\R^{n}$ are equivalent, we can tak a convenient norm). Then
+    \[
+      \begin{aligned}
+        \|f\|_{\infty} &:= \mathop{\sup}_{t \in \R}\|f(t)\|_{1} = \mathop{\sup}_{t \in \R}(|\sin t| + |e^{-t^{2}}|) \\
+        & \mathop{\sup}_{t \in \R}|\sin t| + \mathop{\sup}_{t \in \R}|e^{-t^{2}}| = 2 < \infty.\\
+      \end{aligned}
+    \]
+  \end{example}
+
+  We then define the integral of a step function as before:
+  \begin{theorem}
+    \marginnote{Partition $P$ requires $f$ is a step function with respect to $P$.}
+    Let $f : [a,b] \to V$ be a step function with respect ot some partition $P$. Then
+    \[I_{p}(f) := (a_{1}-a_{0})y_{1} + \cdots + (a_{n}-a_{n-1})y_{n} \in V\]
+    is independent of the choice of the partition $P$ and is called the \emph{integral} of $f$.
+  \end{theorem}
+
+  (This makes it impossible to define the Riemann integral for functions $f : I \to V$, 
+  because it relies on comparing the size of upper and lower step functions)
+  
+  The main ingredient is again uniform, where we now say the a sequence of functions $(f_{n}), f_{n}:I \to V$,
+  $I \subset \R$, converges uniformly to $f : I \to V$ in a normed vector space $(V, \|\cdot\|_{V})$ if
+  \[
+    \|f_{n}-f\|_{\infty} := \mathop{\sup}_{x \in I}\|f_{n}(x) - f(x)\|_{V} \xrightarrow[]{n \to \infty} 0.  
+  \]
+  A function $f$ is them said to be \emph{regulated} if it is the uniform limit of a sequence of step functions.
+  We can then define the integral of $f$ as the limit of the integrals of these step functions.
+
+  The upshot is the following: if $f : [a,b] \to \R^{n}$ is piecewise continuous, then $f$ is regulated and
+  \[
+    \int_{a}^{b}f(x)dx = \int_{a}^{b}\begin{pmatrix}
+      f_{1}(x) \\ \vdots \\ f_{n}(x)
+    \end{pmatrix} dx = 
+    \begin{pmatrix}
+      \int_{a}^{b}f_{1}(x)dx \\ \vdots \\ \int_{a}^{b}f_{n}(x)dx
+    \end{pmatrix}
+  \] 
+  (This follows because a sequence of step functions converging uniformly to $f$ will converge uniformly in each component;
+  the individual components are then equal to the ``usual'' regulated integrals of real-valued functions.)
+
+  Furthermore, we have the standard estimate
+  \[
+    \left\|\int_{a}^{b}f(x)dx\right\|_{V} \leq \int_{a}^{b}\|f(x)\|_{V}dx  \leq |b-a| \cdot \mathop{\sup}_{x \in [a,b]} \|f(x)\|_{V}.  
+  \]
+
+  \begin{theorem}
+    \textit{Mean Value Theorem} Let $(X,V)$ be finite-dimensional vector spaces, $\Omega \subset X$ open and 
+    $f \in C^{1}(\Omega, V)$. Let $x,y \in \Omega$ and assume that the line segment $x + ty$, $0 \leq t \leq 1$,
+    is wholly contained in $\Omega$. Then
+    \begin{equation}
+      f(x+y)-f(x) = \int_{0}^{1}Df|_{x+ty}\,y~dt = \left(\int_{0}^{1}Df|_{x+ty}dt\right)y.
+    \end{equation}
+  \end{theorem}    
+
+  \begin{remark}
+    Note the second term is the integral of elements in $V$ and the third term is the integral of elements in $\L(X,V)$.
+  \end{remark}
+
+  \begin{proof}
+    Define the auxiliary function $g \in C^{1}([0,1], V)$ by $g(t) := f(x + ty)$.
+    Thus (by 186 Lemma 4.2.3) we have
+    \[
+      f(x+y) - f(x) = g(1) - g(0) = \int_{0}^{1}g'(t)dt.  
+    \]
+    For $\gamma(t) = x + ty$ we have $\gamma'(t) = y$. Applying the chain rule,
+    \[
+      g'(t) = D(f \circ \gamma)|_{t} = Df|_{\gamma(t)}D\gamma|_{t} = Df_{x+ty}y.  
+    \]
+    Thus we obtain
+    \[
+      f(x+y) - f(x) = \int_{0}^{1}Df|_{x+ty}ydt,  
+    \]
+    proving the first inequality.
+
+    We now prove that $y$ may be ``taken out'' of the integral. We want to use the linearity of integral.
+    If we take the upper limit of integral as a parameter $z \in (0,1)$, we note that the derivatives of 
+    two sides with respect to this parameter are the same
+    \[
+      \frac{d}{dx}\int_{0}^{z}Df|_{x+yt}\,y~dt = \frac{d}{dz}\left\{\left(\int_{0}^{z}Df|_{x+yt}\right)y\right\}.  
+    \]
+    Furthermore, we have when $z = 0$, both sides are equal to $0$,
+    \[
+      \int_{0}^{0}Df|_{x+yt}\,y~dt = 0 = \left(\int_{0}^{0}Df|_{x+yt}dt\right)y.  
+    \]
+    Therefore,
+    \[
+      \int_{0}^{z}Df|_{x+yt}\,y~dt = \left(\int_{0}^{z}Df|_{x+yt}dt\right)y 
+    \]
+    for all $z \in [0,1]$, in particular for $z = 1$.
+  \end{proof}
+
+  \begin{remark}
+    The Mean Value Theorem yields
+      \[
+      \|f(x+y)-f(x)\|_{V} \leq \|y\|_{X} \cdot \mathop{\sup}_{0 \leq t \leq 1}\|Df|_{x+ty}\|,  
+    \]
+    where $Df|_{x+ty}$ denotes the operator norm of $Df|_{x+ty} \in \L(X,V)$.
+  \end{remark}
+
+  \begin{theorem}
+    Let $X,V$ be finite dimensional vector spaces, $I = [a,b] \subset \R$ an interval and $\Omega \subset X$ an open set.
+    Let $f : I \times \Omega \to V$ be a continuous function such that $Df(t, \cdot)|_{x}$ exists and is continuous at 
+    every $(t,x) \in I \times \Omega$. Then
+    \[
+      g(x) = \int_{a}^{b}f(t,x)dt  
+    \]
+    is differentiable in $\Omega$ and 
+    \[
+      Dg(x) = \int_{a}^{b}Df(t, \cdot)|_{x}dt.  
+    \]
+  \end{theorem}
+
+  \begin{proof}
+    Fix $x \in \Omega$ and choose $h$ small enough such that $x + h \in \Omega$. In any case, we assume $\|h\| < 1$.
+    We want to find
+    \begin{equation}
+      g(x+h) = g(x) + Lh + o(h).
+    \end{equation}
+    We rewrite $g(x+h)-g(x)$ and have
+    \[
+      \begin{aligned}
+        g(x+h) - g(x) =& \int_{a}^{b}f(t,x+h)dt - \int_{a}^{b}f(t,x)dt\\
+        &\int_{a}^{b}\left(f(t,x+h)-f(t,x)\right)dt\\
+      \end{aligned}
+    \]
+    By the Mean Value Theorem, we have
+    \[
+      \begin{aligned}
+        g(x+h) - g(x) &= \int_{a}^{b} \left( \int_{0}^{1}Df(t,\cdot)|_{x+sh}ds \right)dt~h \\
+        &= \int_{a}^{b} \left( \int_{0}^{1}Df(t,\cdot)|_{x}ds \right)dt~h + 
+        \int_{a}^{b} \left( \int_{0}^{1}Df(t,\cdot)|_{x+sh} - Df(t,\cdot)|_{x}ds \right)dt~h. \\
+      \end{aligned}
+    \]
+    Here we add and subtract one $\int_{a}^{b} \left( \int_{0}^{1}Df(t,\cdot)|_{x}ds \right)dt~h 
+    = \int_{a}^{b}Df(t,\cdot)|_{x}dt~h$.
+    We want to show the last part is $o(h)$. We use the standard estimate on integral and have
+    \[
+      \begin{aligned}
+        \int_{a}^{b} \left( \int_{0}^{1}Df(t,\cdot)|_{x+sh} - Df(t,\cdot)|_{x}ds \right)dt~h &
+        \leq (b-a) \mathop{\sup}_{t \in [a,b]}\left\| \int_{0}^{1}(Df(t, \cdot)|_{x+sh}-Df(t, \cdot)|_{x})ds\right\| \cdot \|h\|_{X}\\
+        & \leq (b-a) \mathop{\sup}_{t \in [a,b]} \mathop{\sup}_{s \in [0,1]} \|Df(t, \cdot)|_{x+sh} - Df(t, \cdot)|_{x}\| \cdot \|h\|_{X}\\
+      \end{aligned}
+    \]
+    Here $\|\cdot\|$ on $Df(t,\cdot)|_{x+sh}-Df(t,\cdot)|x$ denotes the operator norm. We now want to show that
+    \[
+      \mathop{\sup}_{t \in [a,b]} \mathop{\sup}_{s \in [0,1]}\left\|Df(t, \cdot)|_{x+sh} - Df(t, \cdot)|_{x}\right\|  
+    \]
+    vanishes when $h \to 0$. To prove this, we need the continuity of $Df(t, \cdot)$.
+
+    Consider the function $Df(t, \cdot)|_{y}$ where $y$ varies in the closed and bounded set $\overline{B_{1}(x)}$.
+    Here we use $\|h\| < 1$. Since $V$ is finite-dimensional, thi set is compact and so is $[a,b] \times \overline{B_{1}(x)}$.
+
+    Since $Df(t, \cdot)|_{y}$ is continuous in the compact set $[a,b] \times \overline{B_{1}(x)}$, it is also
+    uniformly continuous by Theorem $0.13$. Hence, we have when $\|h\| \to 0$, 
+    $\left\|Df(t, \cdot)|_{x+sh} - Df(t,\cdot)|_{x}\right\| \to 0$, for $(t,x+sh) \in [a,b] \times \overline{B_{1}(x)}$.
+
+    Then we have
+    \[
+      g(x+h) = g(x) + \left(\int_{a}^{b}Df(t,\cdot)|_{x}dt\right)h + o(h).
+    \]
+  \end{proof}
+
+  For completeness, we attach the Inverse Function Theorem as follows:
+  \begin{theorem}
+    Suppose that $f : \R^{n} \to \R^{n}$ is continuously differentiable in an open set containing $a$, and $\det Df_{x = a} \neq 0$.
+    Then there is an open set $V$ containing $a$ and an open set $W$ containing $f(a)$ such that $f : V \to W$ has a continuous inverse $f^{-1} : W \to V$ which is differentiable and for any $y \in W$ satisfies
+    \[
+      Df^{-1}|_{y} = \left[Df|_{f^{-1}(y)}\right]^{-1}.  
+    \]
+  \end{theorem}
+  \begin{proof}
+    The major difficulty in the proof is to show $f^{-1}$ exists, continuous and differentiable.
+    To have an intuition, we assume these conditions can be satisfied.
+    We need to find the derivative :
+    \[
+      f^{-1}(y+h) = f^{-1}(y) + Df^{-1}|_{y}h + o(h).  
+    \]
+    We apply $f$ on both sides and
+    \[
+      \begin{aligned}
+        y + h &= f(f^{-1}(y) + Df^{-1}|_{y}h + o(h))  \\
+        &= y + Df|_{f^{-1}(y)} (Df^{-1}|_{y}h + o(h)) + o(h) \\
+        &= y + Df|_{f^{-1}(y)} \circ Df^{-1}|_{y}h + o(h)\\
+      \end{aligned}
+    \]
+    To have the equation holds when $h \to 0$, we need
+    \[
+      Df|_{f^{-1}(y)} \circ Df^{-1}|_{y} = I,  
+    \]
+    and
+    \[
+      Df^{-1}|_{y} = \left[Df|_{f^{-1}(y)}\right]^{-1}.
+    \]
+  \end{proof}
+  \newpage
+  \part{Curves in Vector Spaces}
+  An important case of a map between vector space is a map $\R \to V$, where $(V, \|\cdot\|)$ is a normed vector space.
+  \begin{definition}
+    Let $V$ be a finite-dimensional vector space and $I \subset \R$ and interval.
+    \begin{itemize}
+      \item A set $\mathcal{C} \subset V$ for which there exists a continuous, surjective and locally injective map $\gamma : I \to \mathcal{C}$ is called a \emph{curve}.
+      \item The map $\gamma$ is called a \emph{parametrization} of $\mathcal{C}$.
+      \item A curve $\mathcal{C}$ together with a parametrization is called a \emph{parametrized curve}.
+    \end{itemize}
+  \end{definition}
+
+  \begin{remark}
+    Here \emph{locally injective} means that in the neighborhood $B_{\varepsilon}(x) \cap I$ of any point $x \in I$ the parametrization is injective.
+
+    More generally, let $f$ be a function of a single real variable. We say that a property holds \emph{locally at point $p \in \R$} if this property holds in some $\varepsilon$-neighborhood $B_{\varepsilon}(p)$.
+  \end{remark}
+
+  \begin{example}
+    The set 
+    \[S^{1} := \left\{(x_{1}, x_{2}) \in \R^{2} : x_{1}^{2}+x_{2}^{2} = 1\right\}\]
+    is a curve in $\R^{2}$ because we can find a parametrization, e.g.,
+    \[
+      \gamma:[0,2\pi] \to S^{1}, \qquad \gamma(t) = \begin{pmatrix}
+        \cos(t) \\ \sin(t)
+      \end{pmatrix}.  
+    \]
+    It is clear that $\gamma$ is continuous. The map $\gamma$ is not injective, since $\gamma(0) = \gamma(2 \pi) = (1,0)$. 
+    But it is injective on $(0, 2 \pi)$, we can find $\varepsilon = \pi$ such that $\gamma$ is injective on $B_{\varepsilon}(x) \cap [0, 2 \pi]$.
+  \end{example}
+
+  \begin{definition}
+    Let $\mathcal{C} \subset V$ be a curve possessing a parametrization $\gamma : I \to \mathcal{C}$ with $\text{int}~I = (a,b)$
+    for $-\infty \leq a < b \leq \infty$.
+    \begin{enumerate}[(i)]
+      \item If $\gamma$ is (globally) injective parametrization we say that $\mathcal{C}$ is a \emph{simple curve}.
+      \item If 
+      \[
+        \lim_{t \to a}\gamma(t) = \lim_{t \to b}\gamma(t),  
+      \]
+      the curve $\mathcal{C}$ is said to be \emph{closed}.
+      \item If a curve is not closed, it is said to be \emph{open}. Th point
+      \[
+        x := \lim_{t \to a}\gamma(t) \qquad \text{and} \qquad y := \lim_{t \to b} \gamma(t)  
+      \]
+      are called the \emph{initial point} and the \emph{final point} of the parametrized curve $(\mathcal{C}, \gamma)$.
+      The open curve is said to join $x$ and $y$.
+    \end{enumerate}
+  \end{definition}
+  
+  \begin{remark}
+    Whether a point is an initial point or final point of an open curve depends on the parametrization.
+  \end{remark}
+  
+  \begin{example}
+    The simple open curve
+    \[
+      \mathcal{C} = \left\{(x_{1},x_{2}) \in \R^{2} : 0 \leq x_{1} \leq 1, x_{2} = x_{1}^{2}\right\}  
+    \]
+    joins the points $x = (0,0)$ and $y = (1,1)$.
+    Either may be considered the initial point or the final point. Possible parametrizations are
+    \[
+      \gamma(t) = \begin{pmatrix} 
+        t \\ t^{2}
+      \end{pmatrix}, \qquad
+      \tilde{\gamma}(t) = \begin{pmatrix}
+        1-t \\ (1-t)^{2}
+      \end{pmatrix}  
+    \]
+    where both $\gamma, \tilde{\gamma} : [0,1] \to \mathcal{C}$.
+    \end{example}
+  \newpage
+  \part{Potential Functions}
+
+  \newpage
+  \part{The Second Derivative}
+
+  \newpage
+  \part{Extrema of Potential Functions}
+
+  \newpage
+  \part{Constrained Extrema}
+
+\end{document}
